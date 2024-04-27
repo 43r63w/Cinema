@@ -1,6 +1,7 @@
 
 using Cinema.DAL;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace Cinema.Backend
 {
@@ -18,8 +19,10 @@ namespace Cinema.Backend
             builder.Services.AddSwaggerGen();
 
             // Configure the database
+            //builder.Services.AddDbContext<ApplicationDbContext>();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnectionString")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnectionString"))
+            );
 
             var app = builder.Build();
 

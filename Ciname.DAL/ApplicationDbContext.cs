@@ -1,5 +1,6 @@
 ﻿using Cinema.DAL.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,19 @@ namespace Cinema.DAL
     {
         public DbSet<User> users { get; set; }
 
-        public ApplicationDbContext() { }
+        public ApplicationDbContext() : base() { }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (optionsBuilder.IsConfigured)
+            {
+                return;
+            }
+            // TODO: use the connection string from appsettings.json file.
+            optionsBuilder.UseNpgsql("Host=localhost; Database=cinema; Username=postgres; Password=5c218b");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
