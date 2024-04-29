@@ -12,9 +12,14 @@ namespace Cinema.DAL.Context
 
 
         public DbSet<User> Users { get; set; }
-
         public DbSet<Movie> Movies { get; set; }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<CinemaRoom> CinemaRooms { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<SeatReserved> SeatReserved { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
@@ -26,8 +31,8 @@ namespace Cinema.DAL.Context
                 }
                 );
 
-            modelBuilder.Entity<Category>().HasData(
-                new Category
+            modelBuilder.Entity<Genre>().HasData(
+                new Genre
                 {
                     Id = 1,
                     Name = "Sci-fi",
@@ -39,7 +44,7 @@ namespace Cinema.DAL.Context
                {
                    Id = 1,
                    Title = "Test movie",
-                   CategoryId = 1,
+                   GenreId = 1,
                }
                );
 

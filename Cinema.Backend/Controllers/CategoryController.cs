@@ -17,10 +17,10 @@ namespace Cinema.Backend.Controllers
         }
 
         [HttpGet("GetCategories")]
-        public async Task<List<Category>> GetCategoriesAsync() => await _unitOfWork.CategoryRepository.Get().ToListAsync();
+        public async Task<List<Genre>> GetCategoriesAsync() => await _unitOfWork.CategoryRepository.Get().ToListAsync();
 
         [HttpPost("AddCategory")]
-        public async Task<IActionResult> AddCategoryAsync([FromBody] Category category)
+        public async Task<IActionResult> AddCategoryAsync([FromBody] Genre category)
         {
             if (!ModelState.IsValid)
             {
@@ -46,7 +46,7 @@ namespace Cinema.Backend.Controllers
         }
 
         [HttpPut("UpdateCategory/{id}")]
-        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromBody] Category updatedCategory)
+        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromBody] Genre updatedCategory)
         {
             if (id != updatedCategory.Id)
             {

@@ -14,7 +14,7 @@ namespace Cinema.DAL
         private ApplicationDbContext context;
         private GenericRepository<User> userRepository;
         private GenericRepository<Movie> movieRepository;
-        private GenericRepository<Category> categoryRepository;
+        private GenericRepository<Genre> categoryRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -47,14 +47,14 @@ namespace Cinema.DAL
             }
         }
 
-        public GenericRepository<Category> CategoryRepository
+        public GenericRepository<Genre> CategoryRepository
         {
             get
             {
 
                 if (this.categoryRepository == null)
                 {
-                    this.categoryRepository = new GenericRepository<Category>(context);
+                    this.categoryRepository = new GenericRepository<Genre>(context);
                 }
                 return categoryRepository;
             }
