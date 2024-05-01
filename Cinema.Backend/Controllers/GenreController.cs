@@ -12,18 +12,16 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<GenreController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<Genre> _repository;
 
         public GenreController(ILogger<GenreController> logger, 
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.GenreRepository;
         }
 
         [HttpGet("GetGenres")]
-        public async Task<List<Genre>> GetGenresAsync() => await _repository.Get().ToListAsync();
+        public async Task<List<Genre>> GetGenresAsync() => await _unitOfWork.GenreRepository.Get().ToListAsync();
 
         [HttpPost("AddGenre")]
         public async Task<IActionResult> AddGenreAsync([FromBody] Genre genre)
@@ -33,20 +31,20 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(genre);
+            await _unitOfWork.GenreRepository.InsertAsync(genre);
             return Ok();
         }
 
         [HttpDelete("DeleteGenre/{id}")]
         public async Task<IActionResult> DeleteGenreAsync(int id)
         {
-            var genre = await _repository.GetByIDAsync(id);
+            var genre = await _unitOfWork.GenreRepository.GetByIDAsync(id);
             if (genre == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.GenreRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -60,12 +58,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedGenre);
+                await _unitOfWork.GenreRepository.UpdateAsync(updatedGenre);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                if (await _repository.GetByIDAsync(id) == null)
+                if (await _unitOfWork.GenreRepository.GetByIDAsync(id) == null)
                 {
                     return NotFound();
                 }

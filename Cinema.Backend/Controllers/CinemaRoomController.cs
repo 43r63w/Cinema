@@ -12,18 +12,16 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<CinemaRoomController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<CinemaRoom> _repository;
 
         public CinemaRoomController(ILogger<CinemaRoomController> logger, 
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.CinemaRoomRepository;
         }
 
         [HttpGet("GetCinemaRooms")]
-        public async Task<List<CinemaRoom>> GetCinemaRoomsAsync() => await _repository.Get().ToListAsync();
+        public async Task<List<CinemaRoom>> GetCinemaRoomsAsync() => await _unitOfWork.CinemaRoomRepository.Get().ToListAsync();
 
         [HttpPost("AddCinemaRoom")]
         public async Task<IActionResult> AddCinemaRoomAsync([FromBody] CinemaRoom cinemaRoom)
@@ -33,20 +31,20 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(cinemaRoom);
+            await _unitOfWork.CinemaRoomRepository.InsertAsync(cinemaRoom);
             return Ok();
         }
 
         [HttpDelete("DeleteCinemaRoom/{id}")]
         public async Task<IActionResult> DeleteCinemaRoomAsync(int id)
         {
-            var cinemaRoom = await _repository.GetByIDAsync(id);
+            var cinemaRoom = await _unitOfWork.CinemaRoomRepository.GetByIDAsync(id);
             if (cinemaRoom == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.CinemaRoomRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -60,12 +58,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedCinemaRoom);
+                await _unitOfWork.CinemaRoomRepository.UpdateAsync(updatedCinemaRoom);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                if (await _repository.GetByIDAsync(id) == null)
+                if (await _unitOfWork.CinemaRoomRepository.GetByIDAsync(id) == null)
                 {
                     return NotFound();
                 }

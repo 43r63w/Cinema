@@ -12,19 +12,17 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<SessionController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<Session> _repository;
 
         public SessionController(ILogger<SessionController> logger,
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.SessionRepository;
         }
 
 
         [HttpGet("GetSessions")]
-        public async Task<List<Session>> GetSessionsAsync() => await _repository.Get()
+        public async Task<List<Session>> GetSessionsAsync() => await _unitOfWork.SessionRepository.Get()
             .Include(session => session.Movie)
             .Include(session => session.Movie.Genre)
             .Include(session => session.CinemaRoom)
@@ -39,7 +37,7 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(session);
+            await _unitOfWork.SessionRepository.InsertAsync(session);
             return Ok();
         }
 
@@ -47,13 +45,13 @@ namespace Cinema.Backend.Controllers
         [HttpDelete("DeleteSession/{id}")]
         public async Task<IActionResult> DeleteSessionAsync(int id)
         {
-            var session = await _repository.GetByIDAsync(id);
+            var session = await _unitOfWork.SessionRepository.GetByIDAsync(id);
             if (session == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.SessionRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -68,12 +66,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedSession);
+                await _unitOfWork.SessionRepository.UpdateAsync(updatedSession);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                var session = await _repository.GetByIDAsync(id);
+                var session = await _unitOfWork.SessionRepository.GetByIDAsync(id);
                 if (session == null)
                 {
                     return NotFound();

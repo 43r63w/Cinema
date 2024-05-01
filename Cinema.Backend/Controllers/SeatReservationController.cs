@@ -12,19 +12,17 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<SeatReservationController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<SeatReservation> _repository;
 
         public SeatReservationController(ILogger<SeatReservationController> logger,
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.SeatResarvationRepository;
         }
 
 
         [HttpGet("GetSeatReservations")]
-        public async Task<List<SeatReservation>> GetSeatReservationsAsync() => await _repository.Get()
+        public async Task<List<SeatReservation>> GetSeatReservationsAsync() => await _unitOfWork.SeatResarvationRepository.Get()
             .Include(seatReservation => seatReservation.Reservation)
             .Include(seatReservation => seatReservation.Reservation.Session)
             .Include(seatReservation => seatReservation.Reservation.Session.Movie)
@@ -46,7 +44,7 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(seatReservation);
+            await _unitOfWork.SeatResarvationRepository.InsertAsync(seatReservation);
             return Ok();
         }
 
@@ -54,13 +52,13 @@ namespace Cinema.Backend.Controllers
         [HttpDelete("DeleteSeatReservation/{id}")]
         public async Task<IActionResult> DeleteSeatReservationAsync(int id)
         {
-            var seatReservation = await _repository.GetByIDAsync(id);
+            var seatReservation = await _unitOfWork.SeatResarvationRepository.GetByIDAsync(id);
             if (seatReservation == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.SeatResarvationRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -75,12 +73,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedSeatReservation);
+                await _unitOfWork.SeatResarvationRepository.UpdateAsync(updatedSeatReservation);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                var seatReservation = await _repository.GetByIDAsync(id);
+                var seatReservation = await _unitOfWork.SeatResarvationRepository.GetByIDAsync(id);
                 if (seatReservation == null)
                 {
                     return NotFound();

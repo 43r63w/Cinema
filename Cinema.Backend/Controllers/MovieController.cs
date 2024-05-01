@@ -12,19 +12,17 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<MovieController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<Movie> _repository;
 
         public MovieController(ILogger<MovieController> logger,
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.MovieRepository;
         }
 
 
         [HttpGet("GetMovies")]
-        public async Task<List<Movie>> GetMoviesAsync() => await _repository.Get().Include(movie => movie.Genre).ToListAsync();
+        public async Task<List<Movie>> GetMoviesAsync() => await _unitOfWork.MovieRepository.Get().Include(movie => movie.Genre).ToListAsync();
 
 
         [HttpPost("AddMovie")]
@@ -35,7 +33,7 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(movie);
+            await _unitOfWork.MovieRepository.InsertAsync(movie);
             return Ok();
         }
 
@@ -43,13 +41,13 @@ namespace Cinema.Backend.Controllers
         [HttpDelete("DeleteMovie/{id}")]
         public async Task<IActionResult> DeleteMovieAsync(int id)
         {
-            var movie = await _repository.GetByIDAsync(id);
+            var movie = await _unitOfWork.MovieRepository.GetByIDAsync(id);
             if (movie == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.MovieRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -64,12 +62,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedMovie);
+                await _unitOfWork.MovieRepository.UpdateAsync(updatedMovie);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                var movie = await _repository.GetByIDAsync(id);
+                var movie = await _unitOfWork.MovieRepository.GetByIDAsync(id);
                 if (movie == null)
                 {
                     return NotFound();

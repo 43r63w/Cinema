@@ -12,19 +12,17 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<ReservationController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<Reservation> _repository;
 
         public ReservationController(ILogger<ReservationController> logger,
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.ReservationRepository;
         }
 
 
         [HttpGet("GetReservations")]
-        public async Task<List<Reservation>> GetReservationAsync() => await _repository.Get()
+        public async Task<List<Reservation>> GetReservationAsync() => await _unitOfWork.ReservationRepository.Get()
             .Include(reservation => reservation.Session)
             .Include(reservation => reservation.Session.Movie)
             .Include(reservation => reservation.Session.Movie.Genre)
@@ -41,7 +39,7 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(reservation);
+            await _unitOfWork.ReservationRepository.InsertAsync(reservation);
             return Ok();
         }
 
@@ -49,13 +47,13 @@ namespace Cinema.Backend.Controllers
         [HttpDelete("DeleteReservation/{id}")]
         public async Task<IActionResult> DeleteReservationAsync(int id)
         {
-            var reservation = await _repository.GetByIDAsync(id);
+            var reservation = await _unitOfWork.ReservationRepository.GetByIDAsync(id);
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.ReservationRepository.DeleteAsync(id);
             return Ok();
         }
 
@@ -70,12 +68,12 @@ namespace Cinema.Backend.Controllers
 
             try
             {
-                await _repository.UpdateAsync(updatedReservation);
+                await _unitOfWork.ReservationRepository.UpdateAsync(updatedReservation);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                var reservation = await _repository.GetByIDAsync(id);
+                var reservation = await _unitOfWork.ReservationRepository.GetByIDAsync(id);
                 if (reservation == null)
                 {
                     return NotFound();
