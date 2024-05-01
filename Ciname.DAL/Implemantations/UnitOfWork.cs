@@ -39,9 +39,9 @@ namespace Cinema.DAL.Implemantations
             context.SaveChanges();
         }
 
-        public Task<int> SaveAsync()
+        public async Task SaveAsync()
         {
-            return context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
         private bool disposed = false;

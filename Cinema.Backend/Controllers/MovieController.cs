@@ -2,6 +2,7 @@
 using Cinema.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Cinema.DAL.Implemantations;
 
 namespace Cinema.Backend.Controllers
 {
@@ -11,17 +12,19 @@ namespace Cinema.Backend.Controllers
     {
         private readonly ILogger<MovieController> _logger;
         private readonly UnitOfWork _unitOfWork;
+        private readonly GenericRepository<Movie> _repository;
 
         public MovieController(ILogger<MovieController> logger,
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _repository = unitOfWork.MovieRepository;
         }
 
 
         [HttpGet("GetMovies")]
-        public async Task<List<Movie>> GetMoviesAsync() => await _unitOfWork.MovieRepository.Get().ToListAsync();
+        public async Task<List<Movie>> GetMoviesAsync() => await _repository.Get().Include(movie => movie.Genre).ToListAsync();
 
 
         [HttpPost("AddMovie")]
@@ -32,8 +35,7 @@ namespace Cinema.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _unitOfWork.MovieRepository.InsertAsync(movie);
-            await _unitOfWork.SaveAsync();
+            await _repository.InsertAsync(movie);
             return Ok();
         }
 
@@ -41,13 +43,13 @@ namespace Cinema.Backend.Controllers
         [HttpDelete("DeleteMovie/{id}")]
         public async Task<IActionResult> DeleteMovieAsync(int id)
         {
-            var movie = await _unitOfWork.MovieRepository.GetByIDAsync(id);
+            var movie = await _repository.GetByIDAsync(id);
             if (movie == null)
             {
                 return NotFound();
             }
 
-            await _unitOfWork.MovieRepository.DeleteAsync(id);
+            await _repository.DeleteAsync(id);
             return Ok();
         }
 
@@ -59,17 +61,20 @@ namespace Cinema.Backend.Controllers
                 return BadRequest();
             }
 
+
             try
             {
-                await _unitOfWork.MovieRepository.UpdateAsync(updatedMovie);
+                await _repository.UpdateAsync(updatedMovie);
                 return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException exception)
             {
-                if (await _unitOfWork.MovieRepository.GetByIDAsync(id) == null)
+                var movie = await _repository.GetByIDAsync(id);
+                if (movie == null)
                 {
                     return NotFound();
                 }
+                _logger.LogError(exception, "Unable to update the database", []);
                 throw;
             }
         }

@@ -8,40 +8,40 @@ namespace Cinema.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GenreController : ControllerBase
+    public class CinemaRoomController : ControllerBase
     {
-        private readonly ILogger<GenreController> _logger;
+        private readonly ILogger<CinemaRoomController> _logger;
         private readonly UnitOfWork _unitOfWork;
-        private readonly GenericRepository<Genre> _repository;
+        private readonly GenericRepository<CinemaRoom> _repository;
 
-        public GenreController(ILogger<GenreController> logger, 
+        public CinemaRoomController(ILogger<CinemaRoomController> logger, 
             UnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _repository = unitOfWork.GenreRepository;
+            _repository = unitOfWork.CinemaRoomRepository;
         }
 
-        [HttpGet("GetGenres")]
-        public async Task<List<Genre>> GetGenresAsync() => await _repository.Get().ToListAsync();
+        [HttpGet("GetCinemaRooms")]
+        public async Task<List<CinemaRoom>> GetCinemaRoomsAsync() => await _repository.Get().ToListAsync();
 
-        [HttpPost("AddGenre")]
-        public async Task<IActionResult> AddGenreAsync([FromBody] Genre genre)
+        [HttpPost("AddCinemaRoom")]
+        public async Task<IActionResult> AddCinemaRoomAsync([FromBody] CinemaRoom cinemaRoom)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _repository.InsertAsync(genre);
+            await _repository.InsertAsync(cinemaRoom);
             return Ok();
         }
 
-        [HttpDelete("DeleteGenre/{id}")]
-        public async Task<IActionResult> DeleteGenreAsync(int id)
+        [HttpDelete("DeleteCinemaRoom/{id}")]
+        public async Task<IActionResult> DeleteCinemaRoomAsync(int id)
         {
-            var genre = await _repository.GetByIDAsync(id);
-            if (genre == null)
+            var cinemaRoom = await _repository.GetByIDAsync(id);
+            if (cinemaRoom == null)
             {
                 return NotFound();
             }
@@ -50,17 +50,17 @@ namespace Cinema.Backend.Controllers
             return Ok();
         }
 
-        [HttpPut("UpdateGenre/{id}")]
-        public async Task<IActionResult> UpdateGenreAsync(int id, [FromBody] Genre updatedGenre)
+        [HttpPut("UpdateCinemaRoom/{id}")]
+        public async Task<IActionResult> UpdateCinemaRoomAsync(int id, [FromBody] CinemaRoom updatedCinemaRoom)
         {
-            if (id != updatedGenre.Id)
+            if (id != updatedCinemaRoom.Id)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _repository.UpdateAsync(updatedGenre);
+                await _repository.UpdateAsync(updatedCinemaRoom);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException exception)

@@ -62,17 +62,20 @@ namespace Cinema.DAL.Implemantations
         public virtual void Insert(TEntity entity)
         {
             dbSet.Add(entity);
+            context.SaveChanges();
         }
 
-        public virtual ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity)
+        public virtual async Task InsertAsync(TEntity entity)
         {
-            return dbSet.AddAsync(entity);
+            await dbSet.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
 
         public virtual void Delete(object id)
         {
             TEntity? entityToDelete = dbSet.Find(id);
             Delete(entityToDelete);
+            context.SaveChanges();
         }
 
         public virtual async Task DeleteAsync(object id)
@@ -96,9 +99,10 @@ namespace Cinema.DAL.Implemantations
         {
             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
+            context.SaveChanges();
         }
 
-        public async Task UpdateAsync(TEntity entityToUpdate)
+        public virtual async Task UpdateAsync(TEntity entityToUpdate)
         {
             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
