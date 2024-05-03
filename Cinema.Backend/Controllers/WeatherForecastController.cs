@@ -1,3 +1,4 @@
+using Cinema.DAL;
 using Cinema.DAL.Context;
 using Cinema.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,21 +17,17 @@ namespace Cinema.Backend.Controllers
 
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly UnitOfWork _unitOfWork;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, 
-            ApplicationDbContext applicationDbContext)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,
+            UnitOfWork unitOfWork)
         {
             _logger = logger;
-            _applicationDbContext = applicationDbContext;
+            _unitOfWork = unitOfWork;
         }
 
 
-        [HttpGet("GetMovies")]
-        public async Task<List<Movie>> GetMoviesAsync() => await _applicationDbContext.Movies.Include(c=>c.Category).ToListAsync();
-
-
-
+     
 
 
         //[HttpGet(Name = "GetWeatherForecast")]
