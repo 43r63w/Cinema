@@ -402,3 +402,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Ciname.DAL/Migrations
+/Cinema.Backend/appsettings.json
