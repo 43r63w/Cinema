@@ -23,7 +23,6 @@ namespace Cinema.Backend.Controllers
         [HttpGet("GetSessions")]
         public async Task<IEnumerable<Session>> GetSessionsAsync() => await _unitOfWork.SessionRepository.Get();
 
-
         [HttpGet("GetSessionsByGenre/{genre}")]
         public async Task<IEnumerable<Session>> GetSessionsByGenreAsync(string genre)
         {
@@ -34,6 +33,7 @@ namespace Cinema.Backend.Controllers
 
             return sessions;
         }
+
 
 
 
