@@ -2,6 +2,7 @@
 using Cinema.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Cinema.DAL.Implemantations;
 
 namespace Cinema.Backend.Controllers
 {
@@ -21,7 +22,7 @@ namespace Cinema.Backend.Controllers
 
 
         [HttpGet("GetMovies")]
-        public async Task<List<Movie>> GetMoviesAsync() => await _unitOfWork.MovieRepository.Get().ToListAsync();
+        public async Task<IEnumerable<Movie>> GetMoviesAsync() => await _unitOfWork.MovieRepository.Get();
 
 
         [HttpPost("AddMovie")]

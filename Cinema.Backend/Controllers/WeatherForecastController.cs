@@ -1,5 +1,6 @@
 using Cinema.DAL;
 using Cinema.DAL.Context;
+using Cinema.DAL.Implemantations;
 using Cinema.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

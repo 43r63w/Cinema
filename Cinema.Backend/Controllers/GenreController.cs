@@ -18,7 +18,7 @@ namespace Cinema.Backend.Controllers
         }
 
         [HttpGet("GetCategories")]
-        public async Task<List<Genre>> GetCategoriesAsync() => await _unitOfWork.GenreRepository.Get().ToListAsync();
+        public async Task<IEnumerable<Genre>> GetCategoriesAsync() => await _unitOfWork.GenreRepository.Get();
 
         [HttpPost("AddGanre")]
         public async Task<IActionResult> AddGanreAsync([FromBody] Genre genre)

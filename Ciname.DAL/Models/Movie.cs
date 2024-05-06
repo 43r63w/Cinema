@@ -21,7 +21,7 @@ public class Movie
     [Column("genre_id")]
     public int? GenreId { get; set; } 
     [ForeignKey(nameof(GenreId))]  
-    public Genre Genre { get; set; }
+    public Genre? Genre { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
